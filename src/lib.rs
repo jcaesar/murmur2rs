@@ -13,16 +13,9 @@ pub fn murmur2(data: &[u8]) -> u32 {
             ^ h.wrapping_mul(m)
     });
 
-    let rem = match chunks.remainder() {
-        [] => [0, 0, 0, 0],
-        [a] => [*a, 0, 0, 0],
-        [a, b] => [*a, *b, 0, 0],
-        [a, b, c] => [*a, *b, *c, 0],
-        _ => unreachable!(),
-    };
-    let h = h ^ u32::from_le_bytes(rem);
-    let h = match rem.is_empty() {
-        false => h.wrapping_mul(m),
+    let r = chunks.remainder();
+    let h = match r.is_empty() {
+        false => (h ^ r.iter().rev().fold(0, |r, &i| (i as u32) | (r << 8))).wrapping_mul(m),
         true => h,
     };
 
