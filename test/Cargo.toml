@@ -1,0 +1,12 @@
+[package]
+name = "murmur2-test"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[build-dependencies]
+bindgen = "0.59.2"
+cc = "1.0.73"
+
+[dev-dependencies]
+murmur2 = { path = ".." }

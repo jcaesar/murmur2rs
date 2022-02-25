@@ -1,6 +1,9 @@
-pub fn murmur2(data: &[u8]) -> u32 {
+/// Seed found in Kafka source.
+// No idea where they took it from
+pub const KAFKA_SEED: u32 = 0x9747b28c;
+
+pub fn murmur2(data: &[u8], seed: u32) -> u32 {
     let len = data.len();
-    let seed = 0x9747b28cu32;
     let m = 0x5bd1e995u32;
     let h = seed ^ (len as u32);
 
@@ -36,9 +39,12 @@ impl Slack for u32 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    fn murmur2(data: &[u8]) -> u32 {
+        super::murmur2(data, super::KAFKA_SEED)
+    }
+
     #[test]
-    fn java_test_vecs() {
+    fn kafka_test_vecs() {
         assert_eq!(murmur2("".as_bytes()), 275646681);
         assert_eq!(murmur2("m".as_bytes()), 1063097864);
         assert_eq!(murmur2("mu".as_bytes()), 3903436272);

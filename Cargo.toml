@@ -2,7 +2,9 @@
 name = "murmur2"
 version = "0.1.0"
 edition = "2021"
+description = "murmur2 hash functions"
+keywords = ["murmur2", "murmur", "hash", "hashing"]
+repository = "https://github.com/jcaesar/murmur2rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
+[workspace]
+members = [ "test" ]
