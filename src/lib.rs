@@ -24,18 +24,46 @@ pub fn murmur2(data: &[u8], seed: u32) -> u32 {
 
     h.slack(13).wrapping_mul(m).slack(15)
 }
+pub fn murmur64a(data: &[u8], seed: u64) -> u64 {
+    let len = data.len();
+    let m = 0xc6a4a7935bd1e995u64;
+    let h = seed ^ (len as u64).wrapping_mul(m); // Subtle Difference 1
+
+    let mut chunks = data.chunks_exact(8);
+    let h = (&mut chunks).fold(h, |h, k| {
+        // Subtle difference 2
+        (h ^ u64::from_le_bytes(k.try_into().unwrap())
+            .wrapping_mul(m)
+            .slack(47)
+            .wrapping_mul(m))
+        .wrapping_mul(m)
+    });
+
+    let r = chunks.remainder();
+    let h = match r.is_empty() {
+        false => (h ^ r.iter().rev().fold(0, |r, &i| (i as u64) | (r << 8))).wrapping_mul(m),
+        true => h,
+    };
+
+    h.slack(47).wrapping_mul(m).slack(47)
+}
 
 trait Slack {
     fn slack(self, slack: Self) -> Self
     where
         Self: Sized;
 }
-
-impl Slack for u32 {
-    fn slack(self, slack: Self) -> Self {
-        self ^ self >> slack
-    }
+macro_rules! slack {
+    ($typ:ty) => {
+        impl Slack for $typ {
+            fn slack(self, slack: Self) -> Self {
+                self ^ self >> slack
+            }
+        }
+    };
 }
+slack!(u32);
+slack!(u64);
 
 #[cfg(test)]
 mod tests {

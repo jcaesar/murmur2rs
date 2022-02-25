@@ -6,6 +6,7 @@ fn main() {
         .file("c/src/MurmurHash2.cpp")
         .file("murmur2.cpp")
         .flag("-Wno-implicit-fallthrough")
+        .debug(true)
         .compile("murmurhash2-cpp");
 
     println!("cargo:rustc-link-lib=bz2");
