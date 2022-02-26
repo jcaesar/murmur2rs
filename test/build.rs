@@ -3,8 +3,8 @@ use std::{env, path::PathBuf};
 fn main() {
     cc::Build::new()
         .cpp(true)
-        .file("c/src/MurmurHash2.cpp")
-        .file("murmur2.cpp")
+        .file("orig/src/MurmurHash2.cpp")
+        .file("src/murmur2.cpp")
         .flag("-Wno-implicit-fallthrough")
         .debug(true)
         .compile("murmurhash2-cpp");
@@ -12,7 +12,7 @@ fn main() {
     println!("cargo:rustc-link-lib=bz2");
 
     let bindings = bindgen::Builder::default()
-        .header("murmur2.h")
+        .header("src/murmur2.h")
         .generate()
         .expect("Unable to generate bindings");
 

@@ -1,6 +1,6 @@
 // Wrapper file to re-export stuff as C symbols
 
-#include "c/src/MurmurHash2.h"
+#include "../orig/src/MurmurHash2.h"
 #include "murmur2.h"
 
 extern "C" {

@@ -1,3 +1,3 @@
 [submodule "test/c"]
-	path = test/c
+	path = test/orig
 	url = https://github.com/aappleby/smhasher/
