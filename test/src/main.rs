@@ -14,6 +14,7 @@ mod c {
 
 #[cfg(test)]
 mod tests {
+    use super::c;
     use murmur2::KAFKA_SEED;
     use std::ffi::c_void;
     use std::fmt::Debug;
@@ -39,32 +40,62 @@ mod tests {
     #[test]
     fn murmur2() {
         test(
-            |dat| murmur2::murmur2(dat, KAFKA_SEED),
-            |p, len| unsafe { super::c::cMurmurHash2(p, len, KAFKA_SEED) },
+            |dat| murmur2::murmur2le(dat, KAFKA_SEED),
+            |p, len| unsafe { c::cMurmurHashNeutral2(p, len, KAFKA_SEED) },
         );
+    }
+    #[test]
+    fn murmur2ne() {
+        test(
+            |dat| murmur2::murmur2ne(dat, KAFKA_SEED),
+            |p, len| unsafe { c::cMurmurHash2(p, len, KAFKA_SEED) },
+        );
+    }
+    #[cfg(target_endian = "little")]
+    mod le {
+        use super::*;
+
+        // On little endian architectures, MurmurHash2 and MurmurHashNeutral2 should be equal…
+        #[test]
+        fn equal() {
+            test(
+                |dat| murmur2::murmur2le(dat, KAFKA_SEED),
+                |p, len| unsafe { c::cMurmurHash2(p, len, KAFKA_SEED) },
+            );
+        }
+        // Lastly, there is also MurmurHashAligned2,
+        // which is (wongly?) claimed to be equal to MurmurHash2.
+        // (If I read the code correctly, that again only holds on little endian systems.)
+        #[test]
+        fn aligned() {
+            test(
+                |dat| murmur2::murmur2le(dat, KAFKA_SEED),
+                |p, len| unsafe { c::cMurmurHashAligned2(p, len, KAFKA_SEED) },
+            );
+        }
     }
 
     #[test]
     fn murmur64a() {
         test(
-            |dat| murmur2::murmur64a(dat, SEED_64),
-            |p, len| unsafe { super::c::cMurmurHash64A(p, len, SEED_64) },
+            |dat| murmur2::murmur64ane(dat, SEED_64),
+            |p, len| unsafe { c::cMurmurHash64A(p, len, SEED_64) },
         );
     }
 
     #[test]
     fn murmur64b() {
         test(
-            |dat| murmur2::murmur64b(dat, SEED_64),
-            |p, len| unsafe { super::c::cMurmurHash64B(p, len, SEED_64) },
+            |dat| murmur2::murmur64bne(dat, SEED_64),
+            |p, len| unsafe { c::cMurmurHash64B(p, len, SEED_64) },
         );
     }
 
     #[test]
     fn murmur2a() {
         test(
-            |dat| murmur2::murmur2a(dat, KAFKA_SEED),
-            |p, len| unsafe { super::c::cMurmurHash2A(p, len, KAFKA_SEED) },
+            |dat| murmur2::murmur2ane(dat, KAFKA_SEED),
+            |p, len| unsafe { c::cMurmurHash2A(p, len, KAFKA_SEED) },
         );
     }
 }
