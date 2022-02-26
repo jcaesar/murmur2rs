@@ -59,4 +59,12 @@ mod tests {
             |p, len| unsafe { super::c::cMurmurHash64B(p, len, SEED_64) },
         );
     }
+
+    #[test]
+    fn murmur2a() {
+        test(
+            |dat| murmur2::murmur2a(dat, KAFKA_SEED),
+            |p, len| unsafe { super::c::cMurmurHash2A(p, len, KAFKA_SEED) },
+        );
+    }
 }
