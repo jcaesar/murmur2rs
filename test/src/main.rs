@@ -53,4 +53,19 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn murmur64b() {
+        for dat in sampledata() {
+            let seed = 0x0123456789abcde;
+            assert_eq!(
+                murmur2::murmur64b(dat, seed),
+                unsafe {
+                    super::c::cMurmurHash64B(dat.as_ptr() as *const c_void, dat.len() as i32, seed)
+                },
+                "Input: {:?}",
+                std::str::from_utf8(dat).unwrap()
+            );
+        }
+    }
 }
