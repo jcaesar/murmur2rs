@@ -14,58 +14,49 @@ mod c {
 
 #[cfg(test)]
 mod tests {
+    use murmur2::KAFKA_SEED;
     use std::ffi::c_void;
+    use std::fmt::Debug;
 
-    fn sampledata() -> impl Iterator<Item = &'static [u8]> {
+    const SEED_64: u64 = 0x0123456789abcdef;
+
+    fn test<T: Eq + Debug>(fut: impl Fn(&[u8]) -> T, against: impl Fn(*const c_void, i32) -> T) {
         let dat = "murmur2murmur2murmur2".as_bytes();
-        (0..dat.len()).flat_map(move |s| (s..dat.len()).map(move |e| &dat[s..e]))
+        for s in 0..dat.len() {
+            let dat = &dat[s..];
+            for e in 0..dat.len() {
+                let dat = &dat[..e];
+                assert_eq!(
+                    fut(dat),
+                    against(dat.as_ptr() as *const c_void, dat.len() as i32),
+                    "Input: {:?}",
+                    std::str::from_utf8(dat).unwrap()
+                );
+            }
+        }
     }
 
     #[test]
     fn murmur2() {
-        for dat in sampledata() {
-            assert_eq!(
-                murmur2::murmur2(dat, murmur2::KAFKA_SEED),
-                unsafe {
-                    super::c::cMurmurHash2(
-                        dat.as_ptr() as *const c_void,
-                        dat.len() as i32,
-                        murmur2::KAFKA_SEED,
-                    )
-                },
-                "Input: {:?}",
-                std::str::from_utf8(dat).unwrap()
-            );
-        }
+        test(
+            |dat| murmur2::murmur2(dat, KAFKA_SEED),
+            |p, len| unsafe { super::c::cMurmurHash2(p, len, KAFKA_SEED) },
+        );
     }
 
     #[test]
     fn murmur64a() {
-        for dat in sampledata() {
-            let seed = 0x0123456789abcdef;
-            assert_eq!(
-                murmur2::murmur64a(dat, seed),
-                unsafe {
-                    super::c::cMurmurHash64A(dat.as_ptr() as *const c_void, dat.len() as i32, seed)
-                },
-                "Input: {:?}",
-                std::str::from_utf8(dat).unwrap()
-            );
-        }
+        test(
+            |dat| murmur2::murmur64a(dat, SEED_64),
+            |p, len| unsafe { super::c::cMurmurHash64A(p, len, SEED_64) },
+        );
     }
 
     #[test]
     fn murmur64b() {
-        for dat in sampledata() {
-            let seed = 0x0123456789abcde;
-            assert_eq!(
-                murmur2::murmur64b(dat, seed),
-                unsafe {
-                    super::c::cMurmurHash64B(dat.as_ptr() as *const c_void, dat.len() as i32, seed)
-                },
-                "Input: {:?}",
-                std::str::from_utf8(dat).unwrap()
-            );
-        }
+        test(
+            |dat| murmur2::murmur64b(dat, SEED_64),
+            |p, len| unsafe { super::c::cMurmurHash64B(p, len, SEED_64) },
+        );
     }
 }
