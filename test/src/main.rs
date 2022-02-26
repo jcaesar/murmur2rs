@@ -40,7 +40,7 @@ mod tests {
     #[test]
     fn murmur2() {
         test(
-            |dat| murmur2::murmur2le(dat, KAFKA_SEED),
+            |dat| murmur2::murmur2(dat, KAFKA_SEED),
             |p, len| unsafe { c::cMurmurHashNeutral2(p, len, KAFKA_SEED) },
         );
     }
@@ -59,7 +59,7 @@ mod tests {
         #[test]
         fn equal() {
             test(
-                |dat| murmur2::murmur2le(dat, KAFKA_SEED),
+                |dat| murmur2::murmur2(dat, KAFKA_SEED),
                 |p, len| unsafe { c::cMurmurHash2(p, len, KAFKA_SEED) },
             );
         }
@@ -69,7 +69,7 @@ mod tests {
         #[test]
         fn aligned() {
             test(
-                |dat| murmur2::murmur2le(dat, KAFKA_SEED),
+                |dat| murmur2::murmur2(dat, KAFKA_SEED),
                 |p, len| unsafe { c::cMurmurHashAligned2(p, len, KAFKA_SEED) },
             );
         }

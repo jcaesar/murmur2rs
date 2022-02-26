@@ -16,17 +16,17 @@ macro_rules! test {
     };
 }
 
-test!([murmur2le, murmur2ne], (275646681, 1394823152, 2950539382));
+test!([murmur2, murmur2ne], (275646681, 1394823152, 2950539382));
 test!(
-    [murmur2ale, murmur2ane],
+    [murmur2a, murmur2ane],
     (3816574809, 2735559800, 2216743126)
 );
 test!(
-    [murmur64ale, murmur64ane],
+    [murmur64a, murmur64ane],
     (4971528555162033992, 443646041180781888, 528696902255405805)
 );
 test!(
-    [murmur64ble, murmur64bne],
+    [murmur64b, murmur64bne],
     (
         13704036419649912789,
         16557411989772816646,
