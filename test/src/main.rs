@@ -63,6 +63,31 @@ mod tests {
                 |p, len| unsafe { c::cMurmurHash2(p, len, KAFKA_SEED) },
             );
         }
+
+        #[test]
+        fn murmur64a() {
+            test(
+                |dat| murmur2::murmur64a(dat, SEED_64),
+                |p, len| unsafe { c::cMurmurHash64A(p, len, SEED_64) },
+            );
+        }
+
+        #[test]
+        fn murmur64b() {
+            test(
+                |dat| murmur2::murmur64b(dat, SEED_64),
+                |p, len| unsafe { c::cMurmurHash64B(p, len, SEED_64) },
+            );
+        }
+
+        #[test]
+        fn murmur2a() {
+            test(
+                |dat| murmur2::murmur2a(dat, KAFKA_SEED),
+                |p, len| unsafe { c::cMurmurHash2A(p, len, KAFKA_SEED) },
+            );
+        }
+
         // Lastly, there is also MurmurHashAligned2,
         // which is (wongly?) claimed to be equal to MurmurHash2.
         // (If I read the code correctly, that again only holds on little endian systems.)
