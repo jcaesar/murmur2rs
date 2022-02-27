@@ -1,8 +1,4 @@
-fn main() {
-    panic!("cargo test only!")
-}
-
-mod c {
+pub mod c {
     #![allow(non_upper_case_globals)]
     #![allow(non_camel_case_types)]
     #![allow(non_snake_case)]

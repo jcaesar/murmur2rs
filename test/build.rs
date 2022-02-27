@@ -1,13 +1,19 @@
 use std::{env, path::PathBuf};
 
 fn main() {
-    cc::Build::new()
+    let mut build = cc::Build::new();
+    build
         .cpp(true)
         .file("orig/src/MurmurHash2.cpp")
         .file("src/murmur2.cpp")
         .flag("-Wno-implicit-fallthrough")
-        .debug(true)
-        .compile("murmurhash2-cpp");
+        .debug(true);
+    #[cfg(feature = "fuzz")]
+    build
+        .compiler("clang")
+        .flag("-fno-omit-frame-pointer")
+        .flag("-fsanitize=fuzzer,address");
+    build.compile("murmurhash2-cpp");
 
     println!("cargo:rustc-link-lib=bz2");
 
