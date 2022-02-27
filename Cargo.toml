@@ -2,7 +2,8 @@
 name = "murmur2"
 version = "0.1.0"
 edition = "2021"
-description = "murmur2 hash functions"
+description = "murmur2 hash functions - see docs.rs"
+license = "Apache-2.0"
 keywords = ["murmur2", "murmur", "hash", "hashing"]
 repository = "https://github.com/jcaesar/murmur2rs"
 
